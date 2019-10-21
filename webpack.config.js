@@ -1,20 +1,27 @@
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
 module.exports = {
-  entry: "./src/index.js",
+  entry: "./src/index.tsx",
   devServer: {
     contentBase: path.join(__dirname, "dist"),
     compress: true,
     port: 8080
   },
+  devtool: "inline-source-map",
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
+        test: /\.(j|t)sx?$/,
         exclude: /node_modules/,
-        loaders: ["react-hot-loader/webpack", "babel-loader"]
+        use: {
+          loader: "babel-loader",
+          options: {
+            cacheDirectory: true
+          }
+        }
       },
       {
         test: /\.scss$/,
@@ -41,7 +48,7 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: [".js", ".jsx", ".scss", ".css"]
+    extensions: [".tsx", ".ts", ".js", ".jsx", ".scss", ".css"]
   },
   output: {
     filename: "index.js",
@@ -57,6 +64,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "./src/index.html",
       inject: false
-    })
+    }),
+
+    new ForkTsCheckerWebpackPlugin()
   ]
 };
